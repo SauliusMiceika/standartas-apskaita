@@ -94,10 +94,10 @@ function bindShell() {
   const avatar = document.getElementById('avatar')!;
   avatar.onclick = () => {
     const pop = document.getElementById('profile-pop')!;
-    pop.innerHTML = `<div class="card"><h3>${userFirstName || 'Naudotojas'}</h3><p class="muted">${currentCompany?.name ?? ''} — ${currentCompany?.role ?? ''}</p><button id="pop-logout" class="btn-outline">Atsijungti</button><button id="pop-close" class="btn-text">Uždaryti</button></div>`;
+    if (!pop.classList.contains('hidden')) { pop.classList.add('hidden'); return; }
+    pop.innerHTML = `<div class="card"><h3>${userFirstName || 'Naudotojas'}</h3><p class="muted">${currentCompany?.name ?? ''} — ${currentCompany?.role ?? ''}</p><button id="pop-logout" class="btn-outline">Atsijungti</button></div>`;
     pop.classList.remove('hidden');
     (document.getElementById('pop-logout')!).onclick = async () => { await supabase.auth.signOut(); location.reload(); };
-    (document.getElementById('pop-close')!).onclick = () => pop.classList.add('hidden');
   };
   const sel = document.getElementById('company-select') as HTMLSelectElement;
   const selWrap = sel.parentElement!;
