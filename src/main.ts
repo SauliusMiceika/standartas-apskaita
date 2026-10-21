@@ -122,6 +122,16 @@ function renderApp() {
   renderScreen();
 }
 
+function loginView() {
+  app.innerHTML = `
+    <div class="card login">
+      <h1>Standartas</h1>
+      <p class="sub">Apskaitos sistema</p>
+      <input id="email" type="email" placeholder="El. paštas" autocomplete="email">
+      <input id="password" type="password" placeholder="Slaptažodis" autocomplete="current-password">
+      <button id="btn">Prisijungti</button>
+      <div id="msg"></div>
+    </div>`;
   document.getElementById('btn')!.onclick = async () => {
     const email = (document.getElementById('email') as HTMLInputElement).value.trim();
     const password = (document.getElementById('password') as HTMLInputElement).value;
@@ -194,5 +204,3 @@ function landingView() {
     document.getElementById(id)!.onclick = () => loginView();
   }
 }
-
-function loginView() {
