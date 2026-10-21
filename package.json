@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postbuild": "python3 -c \"import shutil,subprocess;subprocess.run(['sed','s|<title>.*</title>|<title>Standartas</title>|','dist/index.html'],stdout=open('dist/404.html','w'))\""
   },
   "devDependencies": {
     "@types/node": "^26.6.5",

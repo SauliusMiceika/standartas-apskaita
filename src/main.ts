@@ -1,6 +1,11 @@
 import { supabase } from './supabase';
 
 const app = document.getElementById('app')!;
+
+function route(): string {
+  return location.hash.replace(/^#\/?/, '').split('/')[0] || '';
+}
+function go(r: string) { location.hash = r ? '#/' + r : '#/'; }
 let currentCompany: { id: string; name: string; role: string } | null = null;
 let userFirstName = '';
 
@@ -117,16 +122,6 @@ function renderApp() {
   renderScreen();
 }
 
-function loginView() {
-  app.innerHTML = `
-    <div class="card login">
-      <h1>Standartas</h1>
-      <p class="sub">Apskaitos sistema</p>
-      <input id="email" type="email" placeholder="El. paštas" autocomplete="email">
-      <input id="password" type="password" placeholder="Slaptažodis" autocomplete="current-password">
-      <button id="btn">Prisijungti</button>
-      <div id="msg"></div>
-    </div>`;
   document.getElementById('btn')!.onclick = async () => {
     const email = (document.getElementById('email') as HTMLInputElement).value.trim();
     const password = (document.getElementById('password') as HTMLInputElement).value;
@@ -134,6 +129,7 @@ function loginView() {
     msg.textContent = 'Jungiamasi...';
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { msg.textContent = 'Klaida: ' + error.message; return; }
+    location.hash = '#/dashboard';
     await showCompanies();
   };
 }
@@ -151,6 +147,52 @@ async function showCompanies() {
   renderApp();
 }
 
-supabase.auth.getSession().then(({ data: { session } }) => {
-  session ? showCompanies() : loginView();
+function boot() {
+  const r = route();
+  if (r === 'dashboard') {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) showCompanies(); else go('');
+    });
+  } else {
+    // public landing; if session exists, send straight to dashboard
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) { go('dashboard'); return; }
+      landingView();
+    });
+  }
+}
+window.addEventListener('hashchange', () => {
+  if (route() === 'dashboard') boot(); else landingView();
 });
+boot();
+
+function landingView() {
+  const blocks = [
+    { t: 'Apskaita, kuri veikia pati', b: 'Įmeskite dokumentus į Google Drive — Standartas juos paima, atpažįsta ir suveda į apskaitą. Jūs tik patvirtinate.' },
+    { t: 'Kaip tai veikia', b: '1) Įmonė gauna savo dokumentų papkę. 2) Tiekėjų sąskaitos į ją keliauja savaime (el. paštu arba Drive). 3) Sistema atpažįsta duomenis, o jūs patvirtinate vienu piršto bakstelėjimu.' },
+    { t: 'Kodėl verta', b: '• Nenaudojate laiko dokumentų rinkimui — sistema pati primena, ko trūksta.\n• Visada žinote, kur jūsų pinigai.\n• AI konsultantas atsako į kasdienius klausimus iškart.' },
+    { t: 'Kaina', b: 'Išbandykite nemokamai. Be slaptų sąlygų, be įsipareigojimų. Mokate tik tada, kai sistema tikrai dirba jums.' },
+  ];
+  app.innerHTML = `
+    <div class="topbar public">
+      <div class="brand">Standartas</div>
+      <button id="login-btn" class="btn-primary">Prisijungti</button>
+    </div>
+    <main class="feed">
+      <div class="card hero">
+        <h1>Standartas</h1>
+        <p class="sub">Apskaita smulkioms įmonėms — be buhalterio prie sienos.</p>
+        <button id="try-btn" class="btn-primary wide">Išbandykite nemokamai</button>
+      </div>
+      ${blocks.map(bl => `<div class="card"><h2>${bl.t}</h2><p>${bl.b.replace(/\n/g, '<br>')}</p></div>`).join('')}
+      <div class="card cta">
+        <h2>Pasirengę?</h2>
+        <button id="try-btn2" class="btn-primary wide">Prisijungti / Registruotis</button>
+      </div>
+    </main>`;
+  for (const id of ['login-btn', 'try-btn', 'try-btn2']) {
+    document.getElementById(id)!.onclick = () => loginView();
+  }
+}
+
+function loginView() {

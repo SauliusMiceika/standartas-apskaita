@@ -98,3 +98,18 @@ body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; ba
   background: var(--orange); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
 }
 #msg { margin-top: 10px; font-size: 14px; color: var(--muted); text-align: center; min-height: 18px; }
+
+/* Public landing */
+.topbar.public { justify-content: space-between; }
+.topbar.public .brand { font-size: 18px; font-weight: 700; color: #fff; }
+.btn-primary {
+  background: var(--orange); color: #fff; border: none; border-radius: 8px;
+  padding: 10px 20px; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.btn-primary.wide { width: 100%; padding: 14px; font-size: 16px; }
+.feed { padding: 76px 16px 24px; max-width: 640px; margin: 0 auto; }
+.hero { background: var(--gray-dark); color: #fff; }
+.hero h1 { font-size: 28px; margin-bottom: 6px; }
+.hero .sub { color: rgba(255,255,255,0.8); margin-bottom: 16px; }
+.cta { text-align: center; }
+.cta .btn-primary { margin-top: 10px; }
